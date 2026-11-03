@@ -43,7 +43,7 @@
 
   const goOrig = window.go;
   window.go = function (p) {
-    if (p !== 'resultats') return goOrig(p);
+    if (p !== 'resultats') { const r = goOrig(p); if (p === 'reports') refreshReportDossiers(); return r; }
     $$('.page').forEach(x => x.classList.add('hidden'));
     $('#page-resultats').classList.remove('hidden');
     $$('[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page === p));
