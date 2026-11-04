@@ -103,6 +103,19 @@
     tick(); timer = setInterval(tick, 1200);
   }
 
+  const PROX = { 'identique': 'eleve', 'très proche': 'moyen', 'proche': 'faible' };
+  function webHtml(j) {
+    const r = (j.web && j.web.resultats) || [];
+    if (!r.length) return '';
+    return `<h2 style="font:400 20px Georgia,serif;color:var(--gd);margin:22px 0 4px">Divulgations relevées sur le web</h2>
+      <div class="subhead" style="margin-bottom:10px">Pages publiques montrant la création ou des dessins proches · ${(j.web.requetes || []).length} requêtes</div>
+      <div class="ar-cards">${r.map(w => `<div class="ar-card"><div class="hd"><b style="color:var(--gd)">${esc(w.site || '')}</b>
+        <span class="ar-badge ${PROX[(w.proximite || '').toLowerCase()] || 'faible'}">${esc(w.proximite || '')}</span></div>
+        <div class="ar-top">${w.vignette ? `<img src="${w.vignette}" alt="">` : ''}<div class="meta"><div><b>${esc(w.titre || '')}</b></div>
+        ${w.date ? `<div><b>Date :</b> ${esc(w.date)}</div>` : ''}</div></div>
+        <div class="an">${esc(w.observations || '')}</div><a href="${esc(w.url)}" target="_blank" rel="noopener">Ouvrir la page ↗</a></div>`).join('')}</div>`;
+  }
+
   function afficher(j) {
     const a = j.avis, g = a.appreciation_globale || {};
     const c = cases.find(x => x.jobId === j.id);
@@ -118,6 +131,7 @@
         <div><b>Titre :</b> ${esc(x.titre)}</div><div><b>Titulaire :</b> ${esc(x.deposant)}</div>
         <div><b>Dépôt :</b> ${dfr(x.date_depot)} · ${esc(x.territoire)}</div><div><b>N° :</b> ${esc(x.numero)}-${esc(x.modele)}</div></div></div>
         <div class="an">${esc(x.analyse || '')}</div><a href="${x.lien}" target="_blank" rel="noopener">Voir la notice sur DATA INPI ↗</a></div>`).join('')}</div>
+      ${webHtml(j)}
       <div class="ar-actions"><button class="btn alt" type="button" id="ar-to-reports">Compléter dans « Rapports »</button>
       <a class="btn" href="${URL_PDF(j.id)}" download>Télécharger le rapport (PDF)</a></div>`;
     $('#ar-progress').classList.add('hidden'); $('#ar-results').classList.remove('hidden');
